@@ -1,0 +1,39 @@
+#include "main.h"
+#include "stm32l1xx_hal.h"
+
+#include "string.h"
+#include "FB301.h"
+#include "LED.h"
+
+
+extern UART_HandleTypeDef huart2;
+extern UART_HandleTypeDef huart3;
+
+
+void uart_test(void)
+{
+
+	uint8_t received = '\0';
+	HAL_StatusTypeDef rcvStat;
+
+	rcvStat = HAL_UART_Receive(&huart3, &received, 1, 10);
+
+	if(rcvStat == HAL_OK)
+	{
+		LED2_G_ON();
+		HAL_Delay(1000);
+		LED2_G_OFF();
+		if(HAL_UART_Transmit(&huart3, &received, 1, 10) == HAL_OK)
+		{
+			LED1_G_ON();
+			HAL_Delay(1000);
+			LED1_G_OFF();
+		}
+		else
+		{
+			LED2_R_ON();
+			HAL_Delay(1000);
+			LED2_R_OFF();
+		}
+	}
+}
